@@ -1,0 +1,13 @@
+{
+    "name": "ecommerce/urban-sports",
+    "description": "Urban Sports Ecommerce - PHP 8.1 Vanilla MVC",
+    "type": "project",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    }
+}
