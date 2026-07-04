@@ -3,79 +3,131 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Database;
 use App\Core\Request;
 use App\Core\Session;
-use App\Models\Product;
+use App\Core\Auth;
+use App\Core\Log;
+use App\Helpers\Cart;
 
 class CartController extends Controller
 {
     public function index(): void
     {
-        $cart = Session::get('cart', []);
-        $total = 0;
-
-        foreach ($cart as &$item) {
-            $product = Product::find($item['product_id']);
-            $item['product'] = $product;
-            $total += $product['price'] * $item['quantity'];
-        }
+        $items = Cart::getItems();
+        $subtotal = Cart::subtotal();
+        $count = Cart::count();
 
         $this->view('cart/index', [
-            'cart' => $cart,
-            'total' => $total,
+            'items' => $items,
+            'subtotal' => $subtotal,
+            'count' => $count,
+            'title' => 'Shopping Cart',
         ]);
     }
 
     public function add(): void
     {
-        $productId = (int) Request::post('product_id');
+        if (!Request::validateCsrf(Request::post('csrf_token', ''))) {
+            Session::setFlash('error', 'Invalid form token.');
+            $this->redirect('/cart');
+        }
+
+        $productId = (int) Request::post('product_id', 0);
         $quantity = max(1, (int) Request::post('quantity', 1));
 
-        $product = Product::find($productId);
+        if ($productId <= 0) {
+            Session::setFlash('error', 'Invalid product.');
+            $this->redirect(Request::post('redirect', '/products'));
+        }
+
+        $db = Database::getInstance();
+        $product = $db->fetch(
+            "SELECT id, name, slug, price, stock FROM products WHERE id = :id AND status = 'active' AND deleted_at IS NULL",
+            ['id' => $productId]
+        );
+
         if (!$product) {
             Session::setFlash('error', 'Product not found.');
-            $this->back();
+            $this->redirect(Request::post('redirect', '/products'));
         }
 
-        $cart = Session::get('cart', []);
-
-        if (isset($cart[$productId])) {
-            $cart[$productId]['quantity'] += $quantity;
-        } else {
-            $cart[$productId] = [
-                'product_id' => $productId,
-                'quantity' => $quantity,
-            ];
+        if ($product['stock'] < 1) {
+            Session::setFlash('error', 'This product is out of stock.');
+            $this->redirect(Request::post('redirect', '/products'));
         }
 
-        Session::set('cart', $cart);
-        Session::setFlash('success', $product['name'] . ' added to cart.');
-        $this->back();
+        $product['image'] = null;
+        $image = $db->fetch(
+            "SELECT image_path FROM product_images WHERE product_id = :id AND is_primary = 1 LIMIT 1",
+            ['id' => $productId]
+        );
+        if ($image) {
+            $product['image'] = $image['image_path'];
+        }
+
+        Cart::add($productId, $quantity, $product);
+
+        Log::write(Auth::id(), 'add_to_cart', 'cart', "Added '{$product['name']}' (qty: {$quantity})", $productId);
+        Session::setFlash('success', '"' . $product['name'] . '" added to cart.');
+        $this->redirect(Request::post('redirect', '/cart'));
     }
 
     public function update(): void
     {
-        $productId = (int) Request::post('product_id');
-        $quantity = max(0, (int) Request::post('quantity'));
-
-        $cart = Session::get('cart', []);
-
-        if ($quantity <= 0) {
-            unset($cart[$productId]);
-        } elseif (isset($cart[$productId])) {
-            $cart[$productId]['quantity'] = $quantity;
+        if (!Request::validateCsrf(Request::post('csrf_token', ''))) {
+            Session::setFlash('error', 'Invalid form token.');
+            $this->redirect('/cart');
         }
 
-        Session::set('cart', $cart);
-        $this->back();
+        $productId = (int) Request::post('product_id', 0);
+        $quantity = (int) Request::post('quantity', 0);
+
+        if ($productId <= 0) {
+            Session::setFlash('error', 'Invalid product.');
+            $this->redirect('/cart');
+        }
+
+        if ($quantity < 1) {
+            Cart::remove($productId);
+            Log::write(Auth::id(), 'remove_from_cart', 'cart', "Removed product #{$productId} from cart", $productId);
+            Session::setFlash('success', 'Item removed from cart.');
+        } else {
+            $db = Database::getInstance();
+            $product = $db->fetch(
+                "SELECT stock FROM products WHERE id = :id AND status = 'active' AND deleted_at IS NULL",
+                ['id' => $productId]
+            );
+
+            if (!$product) {
+                Cart::remove($productId);
+                Session::setFlash('error', 'Product no longer available.');
+                $this->redirect('/cart');
+            }
+
+            if ($quantity > $product['stock']) {
+                Session::setFlash('error', 'Only ' . $product['stock'] . ' units available.');
+                $quantity = $product['stock'];
+            }
+
+            Cart::update($productId, $quantity);
+            Log::write(Auth::id(), 'update_cart', 'cart', "Updated product #{$productId} qty: {$quantity}", $productId);
+            Session::setFlash('success', 'Cart updated.');
+        }
+
+        $this->redirect('/cart');
     }
 
-    public function remove(): void
+    public function remove(int $id): void
     {
-        $productId = (int) Request::post('product_id');
-        $cart = Session::get('cart', []);
-        unset($cart[$productId]);
-        Session::set('cart', $cart);
-        $this->back();
+        if (!Request::validateCsrf(Request::post('csrf_token', ''))) {
+            Session::setFlash('error', 'Invalid form token.');
+            $this->redirect('/cart');
+        }
+
+        Cart::remove($id);
+        Log::write(Auth::id(), 'remove_from_cart', 'cart', "Removed product #{$id} from cart", $id);
+        Session::setFlash('success', 'Item removed from cart.');
+        $this->redirect('/cart');
     }
 }

@@ -16,7 +16,19 @@ function escape(string $value): string
 
 function old(string $key, string $default = ''): string
 {
-    return $_POST[$key] ?? $default;
+    $oldInput = Session::get('old_input', []);
+    return $oldInput[$key] ?? $_POST[$key] ?? $default;
+}
+
+function error(string $key): ?string
+{
+    $errors = Session::get('errors', []);
+    return $errors[$key] ?? null;
+}
+
+function hasErrors(): bool
+{
+    return !empty(Session::get('errors', []));
 }
 
 function flash(string $key): ?string
@@ -74,4 +86,9 @@ function slugify(string $text): string
     $text = preg_replace('/[^a-z0-9\s-]/', '', $text);
     $text = preg_replace('/[\s-]+/', '-', $text);
     return trim($text, '-');
+}
+
+function cartCount(): int
+{
+    return \App\Helpers\Cart::count();
 }

@@ -3,38 +3,60 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
-use App\Models\ActivityLog;
+use App\Core\Database;
+use App\Core\Request;
 
 class ActivityLogController extends Controller
 {
+    private const PER_PAGE = 20;
+
     public function index(): void
     {
-        $page = (int) ($_GET['page'] ?? 1);
-        $module = $_GET['module'] ?? '';
+        $db = Database::getInstance();
 
-        $logs = $this->getLogs($page, $module);
+        $page = max(1, (int) Request::get('page', 1));
+        $module = Request::get('module', '');
+        $offset = ($page - 1) * self::PER_PAGE;
 
-        $modules = require __DIR__ . '/../../../config/permissions.php';
+        $where = '';
+        $params = [];
+        $countParams = [];
 
-        $this->view('admin/activity-log/index', [
-            'logs' => $logs,
-            'modules' => $modules['modules'],
-            'selectedModule' => $module,
-        ], 'admin');
-    }
-
-    private function getLogs(int $page, string $module): array
-    {
-        if ($module) {
-            $data = ActivityLog::findAllWhere('module', $module);
-            return [
-                'data' => $data,
-                'total' => count($data),
-                'page' => 1,
-                'lastPage' => 1,
-            ];
+        if ($module !== '') {
+            $where = 'WHERE al.module = :module';
+            $params['module'] = $module;
+            $countParams['module'] = $module;
         }
 
-        return ActivityLog::paginate($page, 20);
+        $countResult = $db->fetch(
+            "SELECT COUNT(*) as total FROM activity_logs al {$where}",
+            $countParams
+        );
+        $total = (int) ($countResult['total'] ?? 0);
+        $lastPage = max(1, (int) ceil($total / self::PER_PAGE));
+
+        $logs = $db->fetchAll(
+            "SELECT al.*, u.name AS user_name
+             FROM activity_logs al
+             LEFT JOIN users u ON u.id = al.user_id
+             {$where}
+             ORDER BY al.created_at DESC
+             LIMIT " . self::PER_PAGE . " OFFSET {$offset}",
+            $params
+        );
+
+        $modulesConfig = require __DIR__ . '/../../../config/permissions.php';
+
+        $this->view('admin/activity-logs/index', [
+            'logs' => [
+                'data' => $logs,
+                'total' => $total,
+                'page' => $page,
+                'lastPage' => $lastPage,
+            ],
+            'modules' => $modulesConfig['modules'],
+            'selectedModule' => $module,
+            'title' => 'Activity Logs',
+        ], 'admin');
     }
 }

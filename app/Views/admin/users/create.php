@@ -1,54 +1,62 @@
-<div class="container">
-    <div class="page-header">
-        <h1>Create User</h1>
-    </div>
+<div class="page-header">
+    <h1>New User</h1>
+    <a href="<?= url('admin/users') ?>" class="btn btn-secondary">Back</a>
+</div>
 
-    <?php if (hasFlash('error')): ?>
-        <div class="alert alert-danger"><?= flash('error') ?></div>
-    <?php endif; ?>
+<form action="<?= url('admin/users') ?>" method="post" class="form-card">
+    <?= csrfField() ?>
 
-    <form action="<?= url('/admin/users/store') ?>" method="POST">
-        <?= csrfField() ?>
-
+    <div class="form-row">
         <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" name="name" id="name" class="form-control" value="<?= escape(old('name')) ?>" required>
+            <input type="text" name="name" id="name" value="<?= old('name') ?>" required>
         </div>
 
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" name="email" id="email" class="form-control" value="<?= escape(old('email')) ?>" required>
+            <input type="email" name="email" id="email" value="<?= old('email') ?>" required>
         </div>
+    </div>
 
+    <div class="form-row">
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control" required>
+            <input type="password" name="password" id="password" required>
         </div>
 
         <div class="form-group">
             <label for="role_id">Role</label>
-            <select name="role_id" id="role_id" class="form-control">
-                <option value="">-- Select Role --</option>
-                <?php if (!empty($roles)): ?>
-                    <?php foreach ($roles as $role): ?>
-                        <option value="<?= escape($role['id']) ?>" <?= old('role_id') == $role['id'] ? 'selected' : '' ?>>
-                            <?= escape($role['name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+            <select name="role_id" id="role_id">
+                <option value="">Select role</option>
+                <?php foreach ($roles as $r): ?>
+                    <option value="<?= $r['id'] ?>" <?= old('role_id') == $r['id'] ? 'selected' : '' ?>>
+                        <?= escape($r['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="access_granted">Access Granted</label>
+            <select name="access_granted" id="access_granted">
+                <option value="1" <?= old('access_granted', '1') === '1' ? 'selected' : '' ?>>Yes</option>
+                <option value="0" <?= old('access_granted') === '0' ? 'selected' : '' ?>>No</option>
             </select>
         </div>
 
         <div class="form-group">
-            <label class="checkbox-label">
-                <input type="checkbox" name="access_granted" value="1" <?= old('access_granted') ? 'checked' : '' ?>>
-                Access Granted
-            </label>
+            <label for="status">Status</label>
+            <select name="status" id="status">
+                <option value="active" <?= old('status', 'active') === 'active' ? 'selected' : '' ?>>Active</option>
+                <option value="inactive" <?= old('status') === 'inactive' ? 'selected' : '' ?>>Inactive</option>
+                <option value="suspended" <?= old('status') === 'suspended' ? 'selected' : '' ?>>Suspended</option>
+            </select>
         </div>
+    </div>
 
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <a href="<?= url('/admin/users') ?>" class="btn btn-secondary">Cancel</a>
-        </div>
-    </form>
-</div>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Create User</button>
+    </div>
+</form>

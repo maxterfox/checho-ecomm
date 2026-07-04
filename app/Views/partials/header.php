@@ -1,20 +1,21 @@
-<header class="site-header">
-    <div class="container">
-        <a href="<?= url() ?>" class="logo">
-            <span class="logo-icon">&#9889;</span>
-            <span class="logo-text"><?= APP_NAME ?></span>
-        </a>
-
-        <nav class="main-nav">
-            <a href="<?= url('products') ?>" class="nav-link">Products</a>
-            <a href="<?= url('cart') ?>" class="nav-link">Cart</a>
-            <?php if (isLoggedIn()): ?>
-                <a href="<?= url('admin') ?>" class="nav-link">Admin</a>
-                <a href="<?= url('logout') ?>" class="nav-link">Logout</a>
+<header class="header">
+    <div class="container header-inner">
+        <a href="<?= url() ?>" class="logo"><?= APP_NAME ?></a>
+        <nav class="nav">
+            <a href="<?= url('products') ?>">Products</a>
+            <?php if (\App\Core\Auth::isLoggedIn()): ?>
+                <a href="<?= url('admin') ?>">Admin</a>
+                <a href="<?= url('logout') ?>">Logout</a>
             <?php else: ?>
-                <a href="<?= url('login') ?>" class="nav-link">Login</a>
-                <a href="<?= url('register') ?>" class="nav-link btn btn-primary">Sign Up</a>
+                <a href="<?= url('login') ?>">Login</a>
+                <a href="<?= url('register') ?>" class="btn btn-primary btn-sm">Sign Up</a>
             <?php endif; ?>
+            <a href="<?= url('cart') ?>" class="cart-link" title="Cart">
+                &#128722;
+                <?php if (cartCount() > 0): ?>
+                    <span class="cart-badge"><?= cartCount() ?></span>
+                <?php endif; ?>
+            </a>
         </nav>
     </div>
 </header>

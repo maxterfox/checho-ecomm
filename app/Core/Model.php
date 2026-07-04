@@ -30,14 +30,18 @@ abstract class Model
     public static function findWhere(string $column, mixed $value): ?array
     {
         $instance = new static();
-        $sql = "SELECT * FROM " . static::$table . " WHERE {$column} = :value";
+        $safeColumn = preg_replace('/[^a-zA-Z0-9_`]/', '', $column);
+        $safeColumn = '`' . trim($safeColumn, '`') . '`';
+        $sql = "SELECT * FROM " . static::$table . " WHERE {$safeColumn} = :value";
         return $instance->db->fetch($sql, ['value' => $value]);
     }
 
     public static function findAllWhere(string $column, mixed $value): array
     {
         $instance = new static();
-        $sql = "SELECT * FROM " . static::$table . " WHERE {$column} = :value ORDER BY id DESC";
+        $safeColumn = preg_replace('/[^a-zA-Z0-9_`]/', '', $column);
+        $safeColumn = '`' . trim($safeColumn, '`') . '`';
+        $sql = "SELECT * FROM " . static::$table . " WHERE {$safeColumn} = :value ORDER BY id DESC";
         return $instance->db->fetchAll($sql, ['value' => $value]);
     }
 

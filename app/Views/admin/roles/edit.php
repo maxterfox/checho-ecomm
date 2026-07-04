@@ -1,58 +1,47 @@
 <div class="container">
     <div class="page-header">
-        <h1>Edit Role</h1>
+        <h1>Edit Role: <?= escape($role['name']) ?></h1>
     </div>
 
-    <?php if (hasFlash('error')): ?>
-        <div class="alert alert-danger"><?= flash('error') ?></div>
-    <?php endif; ?>
-
-    <form action="<?= url('/admin/roles/update/' . $role['id']) ?>" method="POST">
+    <form action="<?= url('admin/roles/' . $role['id']) ?>" method="post" class="form-card">
         <?= csrfField() ?>
 
         <div class="form-group">
             <label for="name">Role Name</label>
-            <input type="text" name="name" id="name" class="form-control" value="<?= escape($role['name']) ?>" required>
+            <input type="text" name="name" id="name" value="<?= escape($role['name']) ?>" required>
         </div>
 
-        <fieldset class="form-fieldset">
-            <legend>Module Permissions</legend>
+        <h2>Module Permissions</h2>
 
-            <?php if (!empty($modules)): ?>
-                <?php foreach ($modules as $module): ?>
-                    <?php $moduleName = is_string($module) ? $module : $module['name']; ?>
-                    <div class="module-permissions">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="modules[]" value="<?= escape($moduleName) ?>"
-                                <?= !empty($role['modules']) && in_array($moduleName, $role['modules']) ? 'checked' : '' ?>>
-                            <?= escape(ucfirst($moduleName)) ?>
-                        </label>
+        <?php if (!empty($modules)): ?>
+            <?php foreach ($modules as $module): ?>
+                <?php $checked = isset($rolePermissions[$module['module_name']]); ?>
+                <div class="module-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="modules[]" value="<?= escape($module['module_name']) ?>"
+                               <?= $checked ? 'checked' : '' ?>>
+                        <?= escape($module['display_name']) ?>
+                    </label>
 
-                        <div class="permission-select">
-                            <label for="perm_<?= escape($moduleName) ?>">Permission</label>
-                            <select name="permissions[<?= escape($moduleName) ?>]" id="perm_<?= escape($moduleName) ?>" class="form-control">
-                                <?php if (!empty($permissions)): ?>
-                                    <?php foreach ($permissions as $perm): ?>
-                                        <?php
-                                        $selectedPerm = !empty($role['permissions'][$moduleName]) ? $role['permissions'][$moduleName] : '';
-                                        ?>
-                                        <option value="<?= escape($perm) ?>" <?= $selectedPerm === $perm ? 'selected' : '' ?>>
-                                            <?= escape(ucfirst($perm)) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </select>
-                        </div>
+                    <div class="level-select">
+                        <select name="permissions[<?= escape($module['module_name']) ?>]">
+                            <?php foreach ($permissionLevels as $value => $label): ?>
+                                <option value="<?= $value ?>"
+                                    <?= $checked && $rolePermissions[$module['module_name']]['level'] === $value ? 'selected' : '' ?>>
+                                    <?= $label ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p class="text-muted">No modules available.</p>
-            <?php endif; ?>
-        </fieldset>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p class="empty">No modules available.</p>
+        <?php endif; ?>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Update</button>
-            <a href="<?= url('/admin/roles') ?>" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Update Role</button>
+            <a href="<?= url('admin/roles') ?>" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>

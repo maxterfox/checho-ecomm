@@ -14,11 +14,5 @@ class AuthMiddleware
             header('Location: /login');
             exit;
         }
-
-        if (!Auth::hasAccess()) {
-            Session::setFlash('error', 'Your account does not have access to the system.');
-            header('Location: /');
-            exit;
-        }
     }
 }

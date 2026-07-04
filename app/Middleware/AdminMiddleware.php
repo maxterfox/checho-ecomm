@@ -9,8 +9,20 @@ class AdminMiddleware
 {
     public function handle(): void
     {
+        if (!Auth::isLoggedIn()) {
+            Session::setFlash('error', 'Please log in to access this area.');
+            header('Location: /login');
+            exit;
+        }
+
+        if (!Auth::hasAccess()) {
+            Session::setFlash('error', 'Your account does not have admin access.');
+            header('Location: /');
+            exit;
+        }
+
         if (!Auth::isAdmin()) {
-            Session::setFlash('error', 'You do not have permission to access the admin panel.');
+            Session::setFlash('error', 'Admin privileges required.');
             header('Location: /');
             exit;
         }

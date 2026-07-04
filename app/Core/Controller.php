@@ -42,7 +42,11 @@ abstract class Controller
 
     protected function back(): void
     {
-        $referer = $_SERVER['HTTP_REFERER'] ?? APP_URL;
-        $this->redirect($referer);
+        $referer = $_SERVER['HTTP_REFERER'] ?? '';
+        $allowed = APP_URL . '/';
+        if ($referer !== '' && str_starts_with($referer, $allowed)) {
+            $this->redirect($referer);
+        }
+        $this->redirect('/');
     }
 }
