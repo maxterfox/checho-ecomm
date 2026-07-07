@@ -62,7 +62,7 @@ INSERT INTO users (name, email, password, role_id, access_granted, status)
 SELECT
     'Admin',
     'admin@urbansports.test',
-    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+    '$2y$10$et91BRukapaDR0IqMahuved13f4AFWYRe4VYIXppA070dfMfWMeP2',
     id,
     1,
     'active'

@@ -22,7 +22,7 @@ class OrderController extends Controller
 
         $this->view('admin/orders/index', [
             'orders' => $orders,
-            'title' => 'Orders',
+            'title' => 'Pedidos',
         ], 'admin');
     }
 }

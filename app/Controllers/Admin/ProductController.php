@@ -29,7 +29,7 @@ class ProductController extends Controller
         $this->view('admin/products/index', [
             'products' => $products,
             'canModify' => $canModify,
-            'title' => 'Products',
+            'title' => 'Productos',
         ], 'admin');
     }
 
@@ -45,14 +45,14 @@ class ProductController extends Controller
 
         $this->view('admin/products/create', [
             'categories' => $categories,
-            'title' => 'New Product',
+            'title' => 'Nuevo producto',
         ], 'admin');
     }
 
     public function store(): void
     {
         if (!Request::validateCsrf(Request::post('csrf_token', ''))) {
-            Session::setFlash('error', 'Invalid form token.');
+            Session::setFlash('error', 'Token de formulario inválido.');
             $this->redirect('/admin/products');
         }
 
@@ -70,37 +70,37 @@ class ProductController extends Controller
         $errors = [];
 
         if ($name === '') {
-            $errors['name'] = 'Product name is required.';
+            $errors['name'] = 'El nombre del producto es obligatorio.';
         } elseif (mb_strlen($name) > 300) {
-            $errors['name'] = 'Product name must not exceed 300 characters.';
+            $errors['name'] = 'El nombre del producto no debe exceder 300 caracteres.';
         }
 
         if ($description === '') {
-            $errors['description'] = 'Description is required.';
+            $errors['description'] = 'La descripción es obligatoria.';
         }
 
         if ($price === '' || !is_numeric($price) || (float) $price < 0) {
-            $errors['price'] = 'A valid price is required.';
+            $errors['price'] = 'Se requiere un precio válido.';
         }
 
         if ($discountPrice !== '' && (!is_numeric($discountPrice) || (float) $discountPrice < 0)) {
-            $errors['discount_price'] = 'Discount price must be a valid positive number.';
+            $errors['discount_price'] = 'El precio de descuento debe ser un número positivo válido.';
         }
 
         if ($comparePrice !== '' && (!is_numeric($comparePrice) || (float) $comparePrice < 0)) {
-            $errors['compare_price'] = 'Compare price must be a valid positive number.';
+            $errors['compare_price'] = 'El precio comparativo debe ser un número positivo válido.';
         }
 
         if ($categoryId === '' || (int) $categoryId <= 0) {
-            $errors['category_id'] = 'Please select a category.';
+            $errors['category_id'] = 'Por favor selecciona una categoría.';
         }
 
         if ($stock === '' || !is_numeric($stock) || (int) $stock < 0) {
-            $errors['stock'] = 'Stock must be a valid non-negative number.';
+            $errors['stock'] = 'El stock debe ser un número no negativo válido.';
         }
 
         if (!in_array($status, ['active', 'inactive', 'draft'], true)) {
-            $errors['status'] = 'Invalid status selected.';
+            $errors['status'] = 'Estado seleccionado inválido.';
         }
 
         if (!empty($errors)) {
@@ -114,7 +114,7 @@ class ProductController extends Controller
         $existingSlug = $db->fetch('SELECT id FROM products WHERE slug = :slug AND deleted_at IS NULL', ['slug' => $slug]);
         if ($existingSlug) {
             Session::set('old_input', Request::post());
-            Session::setFlash('error', 'A product with this name already exists (duplicate slug).');
+            Session::setFlash('error', 'Ya existe un producto con este nombre (slug duplicado).');
             $this->redirect('/admin/products/create');
         }
 
@@ -122,7 +122,7 @@ class ProductController extends Controller
             $existingSku = $db->fetch('SELECT id FROM products WHERE sku = :sku AND deleted_at IS NULL', ['sku' => $sku]);
             if ($existingSku) {
                 Session::set('old_input', Request::post());
-                Session::setFlash('error', 'A product with this SKU already exists.');
+                Session::setFlash('error', 'Ya existe un producto con este SKU.');
                 $this->redirect('/admin/products/create');
             }
         }
@@ -158,7 +158,7 @@ class ProductController extends Controller
         }
 
         if (empty($result['filtered'])) {
-            Session::setFlash('error', 'You do not have permission to edit any product fields.');
+            Session::setFlash('error', 'No tienes permiso para editar campos de productos.');
             $this->redirect('/admin/products');
         }
 
@@ -167,10 +167,10 @@ class ProductController extends Controller
         try {
             $productId = $db->insert('products', $result['filtered']);
             Log::write($userId, 'create', 'products', "Created product ID: {$productId} — {$name}", $productId);
-            Session::setFlash('success', 'Product created successfully.');
+            Session::setFlash('success', 'Producto creado correctamente.');
         } catch (\Throwable $e) {
             if (APP_DEBUG) throw $e;
-            Session::setFlash('error', 'Failed to create product.');
+            Session::setFlash('error', 'Error al crear el producto.');
         }
 
         $this->redirect('/admin/products');
@@ -185,7 +185,7 @@ class ProductController extends Controller
         $product = $db->fetch('SELECT * FROM products WHERE id = :id AND deleted_at IS NULL', ['id' => $id]);
 
         if (!$product) {
-            Session::setFlash('error', 'Product not found.');
+            Session::setFlash('error', 'Producto no encontrado.');
             $this->redirect('/admin/products');
         }
 
@@ -200,14 +200,14 @@ class ProductController extends Controller
             'product' => $product,
             'categories' => $categories,
             'fieldPerms' => $fieldPerms,
-            'title' => 'Edit Product',
+            'title' => 'Editar producto',
         ], 'admin');
     }
 
     public function update(int $id): void
     {
         if (!Request::validateCsrf(Request::post('csrf_token', ''))) {
-            Session::setFlash('error', 'Invalid form token.');
+            Session::setFlash('error', 'Token de formulario inválido.');
             $this->redirect('/admin/products');
         }
 
@@ -215,7 +215,7 @@ class ProductController extends Controller
         $product = $db->fetch('SELECT * FROM products WHERE id = :id AND deleted_at IS NULL', ['id' => $id]);
 
         if (!$product) {
-            Session::setFlash('error', 'Product not found.');
+            Session::setFlash('error', 'Producto no encontrado.');
             $this->redirect('/admin/products');
         }
 
@@ -233,37 +233,37 @@ class ProductController extends Controller
         $errors = [];
 
         if ($name === '') {
-            $errors['name'] = 'Product name is required.';
+            $errors['name'] = 'El nombre del producto es obligatorio.';
         } elseif (mb_strlen($name) > 300) {
-            $errors['name'] = 'Product name must not exceed 300 characters.';
+            $errors['name'] = 'El nombre del producto no debe exceder 300 caracteres.';
         }
 
         if ($description === '') {
-            $errors['description'] = 'Description is required.';
+            $errors['description'] = 'La descripción es obligatoria.';
         }
 
         if ($price === '' || !is_numeric($price) || (float) $price < 0) {
-            $errors['price'] = 'A valid price is required.';
+            $errors['price'] = 'Se requiere un precio válido.';
         }
 
         if ($discountPrice !== '' && (!is_numeric($discountPrice) || (float) $discountPrice < 0)) {
-            $errors['discount_price'] = 'Discount price must be a valid positive number.';
+            $errors['discount_price'] = 'El precio de descuento debe ser un número positivo válido.';
         }
 
         if ($comparePrice !== '' && (!is_numeric($comparePrice) || (float) $comparePrice < 0)) {
-            $errors['compare_price'] = 'Compare price must be a valid positive number.';
+            $errors['compare_price'] = 'El precio comparativo debe ser un número positivo válido.';
         }
 
         if ($categoryId === '' || (int) $categoryId <= 0) {
-            $errors['category_id'] = 'Please select a category.';
+            $errors['category_id'] = 'Por favor selecciona una categoría.';
         }
 
         if ($stock === '' || !is_numeric($stock) || (int) $stock < 0) {
-            $errors['stock'] = 'Stock must be a valid non-negative number.';
+            $errors['stock'] = 'El stock debe ser un número no negativo válido.';
         }
 
         if (!in_array($status, ['active', 'inactive', 'draft'], true)) {
-            $errors['status'] = 'Invalid status selected.';
+            $errors['status'] = 'Estado seleccionado inválido.';
         }
 
         if (!empty($errors)) {
@@ -276,7 +276,7 @@ class ProductController extends Controller
             ['slug' => $slug, 'id' => $id]
         );
         if ($conflict) {
-            Session::setFlash('error', 'Another product with this name already exists (duplicate slug).');
+            Session::setFlash('error', 'Ya existe otro producto con este nombre (slug duplicado).');
             $this->redirect('/admin/products/edit/' . $id);
         }
 
@@ -286,7 +286,7 @@ class ProductController extends Controller
                 ['sku' => $sku, 'id' => $id]
             );
             if ($existingSku) {
-                Session::setFlash('error', 'Another product with this SKU already exists.');
+                Session::setFlash('error', 'Ya existe otro producto con este SKU.');
                 $this->redirect('/admin/products/edit/' . $id);
             }
         }
@@ -327,17 +327,17 @@ class ProductController extends Controller
         }
 
         if (empty($result['filtered'])) {
-            Session::setFlash('error', 'You do not have permission to edit any product fields.');
+            Session::setFlash('error', 'No tienes permiso para editar campos de productos.');
             $this->redirect('/admin/products/edit/' . $id);
         }
 
         try {
             $db->update('products', $result['filtered'], 'id = :id', ['id' => $id]);
             Log::write($userId, 'update', 'products', "Updated product ID: {$id} — {$name}", $id);
-            Session::setFlash('success', 'Product updated successfully.');
+            Session::setFlash('success', 'Producto actualizado correctamente.');
         } catch (\Throwable $e) {
             if (APP_DEBUG) throw $e;
-            Session::setFlash('error', 'Failed to update product.');
+            Session::setFlash('error', 'Error al actualizar el producto.');
         }
 
         $this->redirect('/admin/products');
@@ -346,13 +346,13 @@ class ProductController extends Controller
     public function destroy(int $id): void
     {
         if (!Request::validateCsrf(Request::post('csrf_token', ''))) {
-            Session::setFlash('error', 'Invalid form token.');
+            Session::setFlash('error', 'Token de formulario inválido.');
             $this->redirect('/admin/products');
         }
 
         $roleId = (int) (Auth::user()['role_id'] ?? 0);
         if (!Permission::canModify($roleId, 'products')) {
-            Session::setFlash('error', 'You do not have permission to delete products.');
+            Session::setFlash('error', 'No tienes permiso para eliminar productos.');
             $this->redirect('/admin/products');
         }
 
@@ -360,17 +360,17 @@ class ProductController extends Controller
         $product = $db->fetch('SELECT * FROM products WHERE id = :id AND deleted_at IS NULL', ['id' => $id]);
 
         if (!$product) {
-            Session::setFlash('error', 'Product not found.');
+            Session::setFlash('error', 'Producto no encontrado.');
             $this->redirect('/admin/products');
         }
 
         try {
             $db->update('products', ['deleted_at' => date('Y-m-d H:i:s')], 'id = :id', ['id' => $id]);
             Log::write(Auth::id() ?? 0, 'delete', 'products', "Deleted product ID: {$id} — {$product['name']}", $id);
-            Session::setFlash('success', 'Product deleted.');
+            Session::setFlash('success', 'Producto eliminado.');
         } catch (\Throwable $e) {
             if (APP_DEBUG) throw $e;
-            Session::setFlash('error', 'Failed to delete product.');
+            Session::setFlash('error', 'Error al eliminar el producto.');
         }
 
         $this->redirect('/admin/products');
@@ -382,17 +382,17 @@ class ProductController extends Controller
         $maxSize = 2 * 1024 * 1024;
 
         if ($file['error'] !== UPLOAD_ERR_OK) {
-            Session::setFlash('error', 'Image upload failed. Error code: ' . $file['error']);
+            Session::setFlash('error', 'Error al subir la imagen. Código: ' . $file['error']);
             return false;
         }
 
         if (!in_array($file['type'], $allowedTypes, true)) {
-            Session::setFlash('error', 'Image must be JPEG, PNG, WebP, or GIF.');
+            Session::setFlash('error', 'La imagen debe ser JPEG, PNG, WebP o GIF.');
             return false;
         }
 
         if ($file['size'] > $maxSize) {
-            Session::setFlash('error', 'Image must be under 2MB.');
+            Session::setFlash('error', 'La imagen debe pesar menos de 2MB.');
             return false;
         }
 
@@ -408,7 +408,7 @@ class ProductController extends Controller
         $destPath = __DIR__ . '/../../../public/storage/' . $filename;
 
         if (!move_uploaded_file($file['tmp_name'], $destPath)) {
-            Session::setFlash('error', 'Failed to save uploaded image.');
+            Session::setFlash('error', 'Error al guardar la imagen subida.');
             return false;
         }
 

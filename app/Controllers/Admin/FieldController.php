@@ -27,14 +27,14 @@ class FieldController extends Controller
 
         $this->view('admin/fields/index', [
             'modules' => $modules,
-            'title' => 'Field Permissions',
+            'title' => 'Permisos de campos',
         ], 'admin');
     }
 
     public function edit(string $module): void
     {
         if (!in_array($module, $this->supportedModules, true)) {
-            Session::setFlash('error', 'Module not supported for field permissions.');
+            Session::setFlash('error', 'Módulo no compatible con permisos de campos.');
             $this->redirect('/admin/fields');
         }
 
@@ -51,14 +51,14 @@ class FieldController extends Controller
             'roles' => $roles,
             'fields' => $fields,
             'fieldPermissions' => $fieldPermissions,
-            'title' => 'Field Permissions — ' . ucfirst($module),
+            'title' => 'Permisos de campos — ' . ucfirst($module),
         ], 'admin');
     }
 
     public function update(): void
     {
         if (!Request::validateCsrf(Request::post('csrf_token', ''))) {
-            Session::setFlash('error', 'Invalid form token.');
+            Session::setFlash('error', 'Token de formulario inválido.');
             $this->redirect('/admin/fields');
         }
 
@@ -66,7 +66,7 @@ class FieldController extends Controller
         $permissions = Request::post('permissions', []);
 
         if (!in_array($module, $this->supportedModules, true)) {
-            Session::setFlash('error', 'Invalid module.');
+            Session::setFlash('error', 'Módulo inválido.');
             $this->redirect('/admin/fields');
         }
 
@@ -95,11 +95,11 @@ class FieldController extends Controller
             $db->commit();
 
             Log::write(Auth::id(), 'update', 'settings', "Updated field permissions for module: {$module}");
-            Session::setFlash('success', 'Field permissions updated successfully.');
+            Session::setFlash('success', 'Permisos de campos actualizados correctamente.');
         } catch (\Throwable $e) {
             $db->rollback();
             if (APP_DEBUG) throw $e;
-            Session::setFlash('error', 'Failed to update field permissions.');
+            Session::setFlash('error', 'Error al actualizar permisos de campos.');
         }
 
         $this->redirect('/admin/fields/' . $module);

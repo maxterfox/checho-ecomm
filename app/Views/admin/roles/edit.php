@@ -1,17 +1,17 @@
 <div class="container">
     <div class="page-header">
-        <h1>Edit Role: <?= escape($role['name']) ?></h1>
+        <h1>Editar rol: <?= escape($role['name']) ?></h1>
     </div>
 
     <form action="<?= url('admin/roles/' . $role['id']) ?>" method="post" class="form-card">
         <?= csrfField() ?>
 
         <div class="form-group">
-            <label for="name">Role Name</label>
+            <label for="name">Nombre del rol</label>
             <input type="text" name="name" id="name" value="<?= escape($role['name']) ?>" required>
         </div>
 
-        <h2>Module Permissions</h2>
+        <h2>Permisos de módulos</h2>
 
         <?php if (!empty($modules)): ?>
             <?php foreach ($modules as $module): ?>
@@ -36,12 +36,12 @@
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
-            <p class="empty">No modules available.</p>
+            <p class="empty">No hay módulos disponibles.</p>
         <?php endif; ?>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Update Role</button>
-            <a href="<?= url('admin/roles') ?>" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Actualizar rol</button>
+            <a href="<?= url('admin/roles') ?>" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 </div>

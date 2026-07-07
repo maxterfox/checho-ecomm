@@ -1,9 +1,9 @@
 <div class="page-header">
-    <h1>Activity Logs</h1>
+    <h1>Registro de actividades</h1>
     <div class="filter-group">
         <form action="<?= url('admin/activity-logs') ?>" method="get">
             <select name="module" onchange="this.form.submit()">
-                <option value="">All Modules</option>
+                <option value="">Todos los módulos</option>
                 <?php foreach ($modules as $key => $label): ?>
                     <option value="<?= $key ?>" <?= $selectedModule === $key ? 'selected' : '' ?>><?= escape($label) ?></option>
                 <?php endforeach; ?>
@@ -15,21 +15,21 @@
 <table class="table">
     <thead>
         <tr>
-            <th>User</th>
-            <th>Action</th>
-            <th>Module</th>
-            <th>Description</th>
+            <th>Usuario</th>
+            <th>Acción</th>
+            <th>Módulo</th>
+            <th>Descripción</th>
             <th>IP</th>
-            <th>Date</th>
+            <th>Fecha</th>
         </tr>
     </thead>
     <tbody>
         <?php if (empty($logs['data'])): ?>
-            <tr><td colspan="6" class="empty">No activity logged yet.</td></tr>
+            <tr><td colspan="6" class="empty">Aún no hay actividad registrada.</td></tr>
         <?php else: ?>
             <?php foreach ($logs['data'] as $log): ?>
                 <tr>
-                    <td><?= escape($log['user_name'] ?? 'System') ?></td>
+                    <td><?= escape($log['user_name'] ?? 'Sistema') ?></td>
                     <td><span class="badge-action badge-<?= $log['action'] ?>"><?= escape($log['action']) ?></span></td>
                     <td><?= escape($log['module']) ?></td>
                     <td><?= escape(truncate($log['description'] ?? '', 100)) ?></td>

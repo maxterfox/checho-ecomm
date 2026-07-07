@@ -9,7 +9,7 @@ class SettingsController extends Controller
     public function index(): void
     {
         $this->view('admin/settings/index', [
-            'title' => 'Settings',
+            'title' => 'Configuración',
         ], 'admin');
     }
 }

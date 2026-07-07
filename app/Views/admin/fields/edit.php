@@ -1,7 +1,7 @@
 <div class="container">
     <div class="page-header">
-        <h1>Field Permissions: <?= escape(ucfirst($module)) ?></h1>
-        <a href="<?= url('admin/fields') ?>" class="btn btn-secondary">Back to Modules</a>
+        <h1>Permisos de campos: <?= escape(ucfirst($module)) ?></h1>
+        <a href="<?= url('admin/fields') ?>" class="btn btn-secondary">Volver a módulos</a>
     </div>
 
     <form action="<?= url('admin/fields/update') ?>" method="post">
@@ -11,7 +11,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Field</th>
+                    <th>Campo</th>
                     <?php foreach ($roles as $role): ?>
                         <th class="role-col"><?= escape($role['name']) ?></th>
                     <?php endforeach; ?>
@@ -36,7 +36,7 @@
         </table>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Save Field Permissions</button>
+            <button type="submit" class="btn btn-primary">Guardar permisos de campos</button>
         </div>
     </form>
 </div>

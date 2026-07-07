@@ -47,7 +47,7 @@
                     <span class="product-detail-price"><?= formatPrice((float) $product['price']) ?></span>
                     <?php if ((float) $product['compare_price'] > 0): ?>
                         <span class="product-detail-old-price"><?= formatPrice((float) $product['compare_price']) ?></span>
-                        <span class="product-detail-save">Save <?= formatPrice((float) $product['compare_price'] - (float) $product['price']) ?></span>
+                        <span class="product-detail-save">Ahorra <?= formatPrice((float) $product['compare_price'] - (float) $product['price']) ?></span>
                     <?php endif; ?>
                 </div>
 
@@ -81,10 +81,10 @@
                                 <input type="number" name="quantity" value="1" min="1" max="<?= $product['stock'] ?>" class="qty-input">
                                 <button type="button" class="qty-btn qty-plus">+</button>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-lg btn-block">Add to Cart</button>
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">Agrega a la cesta</button>
                         </form>
                     <?php else: ?>
-                        <button class="btn btn-lg btn-block" disabled style="background:var(--gray);color:var(--text-muted);cursor:not-allowed;">Out of Stock</button>
+                        <button class="btn btn-lg btn-block" disabled style="background:var(--gray);color:var(--text-muted);cursor:not-allowed;">Agotado</button>
                     <?php endif; ?>
                 </div>
             </div>

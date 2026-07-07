@@ -1,7 +1,7 @@
 <div class="page-header">
-    <h1>Categories</h1>
+    <h1>Categorías</h1>
     <?php if (\App\Helpers\Permission::canModify((int) (\App\Core\Auth::user()['role_id'] ?? 0), 'categories')): ?>
-        <a href="<?= url('admin/categories/create') ?>" class="btn btn-primary">New Category</a>
+        <a href="<?= url('admin/categories/create') ?>" class="btn btn-primary">Nueva categoría</a>
     <?php endif; ?>
 </div>
 
@@ -9,15 +9,15 @@
     <thead>
         <tr>
             <th>ID</th>
-            <th>Name</th>
+            <th>Nombre</th>
             <th>Slug</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>Estado</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
         <?php if (empty($categories)): ?>
-            <tr><td colspan="5" class="empty">No categories found.</td></tr>
+            <tr><td colspan="5" class="empty">No se encontraron categorías.</td></tr>
         <?php else: ?>
             <?php foreach ($categories as $cat): ?>
                 <tr>
@@ -26,7 +26,7 @@
                     <td><?= escape($cat['slug']) ?></td>
                     <td><?= escape($cat['status']) ?></td>
                     <td class="actions">
-                        <a href="<?= url('admin/categories/edit/' . $cat['id']) ?>" class="btn btn-sm">Edit</a>
+                        <a href="<?= url('admin/categories/edit/' . $cat['id']) ?>" class="btn btn-sm">Editar</a>
                     </td>
                 </tr>
             <?php endforeach; ?>

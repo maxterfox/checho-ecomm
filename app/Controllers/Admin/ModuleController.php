@@ -56,7 +56,7 @@ class ModuleController extends Controller
         }
 
         $this->log('update', MODULE_SETTINGS, "Updated field {$field} in module {$module}");
-        Session::setFlash('success', 'Field configuration updated.');
+        Session::setFlash('success', 'Configuración de campos actualizada.');
         $this->redirect('/admin/modules');
     }
 }

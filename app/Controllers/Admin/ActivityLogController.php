@@ -56,7 +56,7 @@ class ActivityLogController extends Controller
             ],
             'modules' => $modulesConfig['modules'],
             'selectedModule' => $module,
-            'title' => 'Activity Logs',
+            'title' => 'Registro de actividades',
         ], 'admin');
     }
 }

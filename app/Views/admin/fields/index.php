@@ -1,15 +1,15 @@
 <div class="container">
     <div class="page-header">
-        <h1>Field Permissions</h1>
+        <h1>Permisos de campos</h1>
     </div>
 
-    <p>Select a module to configure which fields each role can edit.</p>
+    <p>Selecciona un módulo para configurar qué campos puede editar cada rol.</p>
 
     <div class="module-grid">
         <?php foreach ($modules as $module): ?>
             <a href="<?= url('admin/fields/' . $module['name']) ?>" class="module-card">
                 <h3><?= escape($module['display_name']) ?></h3>
-                <p><?= $module['field_count'] ?> field(s)</p>
+                <p><?= $module['field_count'] ?> campo(s)</p>
             </a>
         <?php endforeach; ?>
     </div>

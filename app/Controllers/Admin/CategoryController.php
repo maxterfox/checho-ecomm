@@ -19,7 +19,7 @@ class CategoryController extends Controller
             'SELECT * FROM categories WHERE deleted_at IS NULL ORDER BY name'
         );
 
-        $this->view('admin/categories/index', ['categories' => $categories, 'title' => 'Categories'], 'admin');
+        $this->view('admin/categories/index', ['categories' => $categories, 'title' => 'Categorías'], 'admin');
     }
 
     public function create(): void
@@ -27,13 +27,13 @@ class CategoryController extends Controller
         $db = Database::getInstance();
         $parentCategories = $db->fetchAll("SELECT id, name FROM categories WHERE deleted_at IS NULL ORDER BY name");
 
-        $this->view('admin/categories/create', ['parentCategories' => $parentCategories, 'title' => 'New Category'], 'admin');
+        $this->view('admin/categories/create', ['parentCategories' => $parentCategories, 'title' => 'Nueva categoría'], 'admin');
     }
 
     public function store(): void
     {
         if (!Request::validateCsrf(Request::post('csrf_token', ''))) {
-            Session::setFlash('error', 'Invalid form token.');
+            Session::setFlash('error', 'Token de formulario inválido.');
             $this->redirect('/admin/categories');
         }
 
@@ -54,7 +54,7 @@ class CategoryController extends Controller
         }
 
         if (empty($result['filtered'])) {
-            Session::setFlash('error', 'You do not have permission to edit any category fields.');
+            Session::setFlash('error', 'No tienes permiso para editar campos de categorías.');
             $this->redirect('/admin/categories');
         }
 
@@ -64,10 +64,10 @@ class CategoryController extends Controller
         try {
             $catId = $db->insert('categories', $result['filtered']);
             Log::write($userId, 'create', 'categories', "Created category ID: {$catId}", $catId);
-            Session::setFlash('success', 'Category created successfully.');
+            Session::setFlash('success', 'Categoría creada correctamente.');
         } catch (\Throwable $e) {
             if (APP_DEBUG) throw $e;
-            Session::setFlash('error', 'Failed to create category.');
+            Session::setFlash('error', 'Error al crear la categoría.');
         }
 
         $this->redirect('/admin/categories');
@@ -79,7 +79,7 @@ class CategoryController extends Controller
         $category = $db->fetch('SELECT * FROM categories WHERE id = :id AND deleted_at IS NULL', ['id' => $id]);
 
         if (!$category) {
-            Session::setFlash('error', 'Category not found.');
+            Session::setFlash('error', 'Categoría no encontrada.');
             $this->redirect('/admin/categories');
         }
 
@@ -95,14 +95,14 @@ class CategoryController extends Controller
             'category' => $category,
             'parentCategories' => $parentCategories,
             'fieldPerms' => $fieldPerms,
-            'title' => 'Edit Category',
+            'title' => 'Editar categoría',
         ], 'admin');
     }
 
     public function update(int $id): void
     {
         if (!Request::validateCsrf(Request::post('csrf_token', ''))) {
-            Session::setFlash('error', 'Invalid form token.');
+            Session::setFlash('error', 'Token de formulario inválido.');
             $this->redirect('/admin/categories');
         }
 
@@ -110,7 +110,7 @@ class CategoryController extends Controller
         $category = $db->fetch('SELECT * FROM categories WHERE id = :id AND deleted_at IS NULL', ['id' => $id]);
 
         if (!$category) {
-            Session::setFlash('error', 'Category not found.');
+            Session::setFlash('error', 'Categoría no encontrada.');
             $this->redirect('/admin/categories');
         }
 
@@ -131,17 +131,17 @@ class CategoryController extends Controller
         }
 
         if (empty($result['filtered'])) {
-            Session::setFlash('error', 'You do not have permission to edit any category fields.');
+            Session::setFlash('error', 'No tienes permiso para editar campos de categorías.');
             $this->redirect('/admin/categories/edit/' . $id);
         }
 
         try {
             $db->update('categories', $result['filtered'], 'id = :id', ['id' => $id]);
             Log::write($userId, 'update', 'categories', "Updated category ID: {$id}", $id);
-            Session::setFlash('success', 'Category updated successfully.');
+            Session::setFlash('success', 'Categoría actualizada correctamente.');
         } catch (\Throwable $e) {
             if (APP_DEBUG) throw $e;
-            Session::setFlash('error', 'Failed to update category.');
+            Session::setFlash('error', 'Error al actualizar la categoría.');
         }
 
         $this->redirect('/admin/categories');
@@ -153,17 +153,17 @@ class CategoryController extends Controller
 
         $roleId = (int) (Auth::user()['role_id'] ?? 0);
         if (!Permission::canModify($roleId, 'categories')) {
-            Session::setFlash('error', 'You do not have permission to delete categories.');
+            Session::setFlash('error', 'No tienes permiso para eliminar categorías.');
             $this->redirect('/admin/categories');
         }
 
         try {
             $db->update('categories', ['deleted_at' => date('Y-m-d H:i:s')], 'id = :id', ['id' => $id]);
             Log::write(Auth::id() ?? 0, 'delete', 'categories', "Deleted category ID: {$id}", $id);
-            Session::setFlash('success', 'Category deleted.');
+            Session::setFlash('success', 'Categoría eliminada.');
         } catch (\Throwable $e) {
             if (APP_DEBUG) throw $e;
-            Session::setFlash('error', 'Failed to delete category.');
+            Session::setFlash('error', 'Error al eliminar la categoría.');
         }
 
         $this->redirect('/admin/categories');

@@ -1,6 +1,6 @@
 <div class="container">
     <div class="page-header">
-        <h1>Activity Log</h1>
+        <h1>Registro de actividades</h1>
     </div>
 
     <?php if (hasFlash('success')): ?>
@@ -9,9 +9,9 @@
 
     <form method="GET" action="<?= url('/admin/activity-log') ?>" class="filter-form">
         <div class="form-group">
-            <label for="module">Filter by Module</label>
+            <label for="module">Filtrar por módulo</label>
             <select name="module" id="module" class="form-control" onchange="this.form.submit()">
-                <option value="">All Modules</option>
+                <option value="">Todos los módulos</option>
                 <?php if (!empty($modules)): ?>
                     <?php foreach ($modules as $module): ?>
                         <option value="<?= escape($module['name'] ?? $module) ?>" <?= (isset($_GET['module']) && $_GET['module'] === ($module['name'] ?? $module)) ? 'selected' : '' ?>>
@@ -26,12 +26,12 @@
     <table class="table">
         <thead>
             <tr>
-                <th>User</th>
-                <th>Action</th>
-                <th>Module</th>
-                <th>Description</th>
-                <th>Date</th>
-                <th>IP Address</th>
+                <th>Usuario</th>
+                <th>Acción</th>
+                <th>Módulo</th>
+                <th>Descripción</th>
+                <th>Fecha</th>
+                <th>Dirección IP</th>
             </tr>
         </thead>
         <tbody>
@@ -48,7 +48,7 @@
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="6" class="text-center">No activity logs found.</td>
+                    <td colspan="6" class="text-center">No se encontraron registros de actividad.</td>
                 </tr>
             <?php endif; ?>
         </tbody>

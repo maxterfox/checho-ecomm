@@ -15,16 +15,16 @@ define('PERMISSION_MODIFY', 'modify');
 
 return [
     'modules' => [
-        MODULE_USERS => 'Users',
-        MODULE_PRODUCTS => 'Products',
-        MODULE_CATEGORIES => 'Categories',
-        MODULE_ORDERS => 'Orders',
+        MODULE_USERS => 'Usuarios',
+        MODULE_PRODUCTS => 'Productos',
+        MODULE_CATEGORIES => 'Categorías',
+        MODULE_ORDERS => 'Pedidos',
         MODULE_ROLES => 'Roles',
-        MODULE_ACTIVITY_LOGS => 'Activity Logs',
-        MODULE_SETTINGS => 'Settings',
+        MODULE_ACTIVITY_LOGS => 'Registro de actividades',
+        MODULE_SETTINGS => 'Configuración',
     ],
     'permissions' => [
-        PERMISSION_VIEW => 'View Only',
-        PERMISSION_MODIFY => 'View & Modify',
+        PERMISSION_VIEW => 'Solo ver',
+        PERMISSION_MODIFY => 'Ver y modificar',
     ],
 ];

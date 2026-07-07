@@ -54,7 +54,7 @@ class DashboardController extends Controller
             'recentLogs' => $recentLogs,
             'recentOrders' => $recentOrders,
             'modules' => $modules,
-            'title' => 'Dashboard',
+            'title' => 'Panel principal',
         ], 'admin');
     }
 }

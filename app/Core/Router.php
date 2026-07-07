@@ -72,14 +72,15 @@ class Router
         $this->loadView('errors/404');
     }
 
-    private function parseUri(string $queryString): string
+    private function parseUri(string $uri): string
     {
-        if (empty($queryString)) {
+        $path = parse_url($uri, PHP_URL_PATH);
+
+        if ($path === null || $path === '' || $path === false) {
             return '/';
         }
 
-        parse_str($queryString, $params);
-        return $params['url'] ?? '/';
+        return $path;
     }
 
     private function loadView(string $view): void

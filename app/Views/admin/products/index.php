@@ -1,7 +1,7 @@
 <div class="page-header">
-    <h1>Products</h1>
+    <h1>Productos</h1>
     <?php if ($canModify): ?>
-        <a href="<?= url('admin/products/create') ?>" class="btn btn-primary">New Product</a>
+        <a href="<?= url('admin/products/create') ?>" class="btn btn-primary">Nuevo producto</a>
     <?php endif; ?>
 </div>
 
@@ -9,18 +9,18 @@
     <thead>
         <tr>
             <th>ID</th>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Price</th>
+            <th>Imagen</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Precio</th>
             <th>Stock</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>Estado</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
         <?php if (empty($products)): ?>
-            <tr><td colspan="8" class="empty">No products found.</td></tr>
+            <tr><td colspan="8" class="empty">No se encontraron productos.</td></tr>
         <?php else: ?>
             <?php foreach ($products as $p): ?>
                 <tr>
@@ -39,17 +39,17 @@
                     <td>
                         <?= formatPrice($p['price']) ?>
                         <?php if (!empty($p['discount_price'])): ?>
-                            <span class="table-badge sale">Sale</span>
+                            <span class="table-badge sale">Oferta</span>
                         <?php endif; ?>
                     </td>
                     <td><?= (int) $p['stock'] ?></td>
                     <td><span class="status-badge status-<?= $p['status'] === 'active' ? 'completed' : ($p['status'] === 'draft' ? 'pending' : 'cancelled') ?>"><?= escape($p['status']) ?></span></td>
                     <td class="actions-cell">
-                        <a href="<?= url('admin/products/edit/' . $p['id']) ?>" class="btn btn-sm btn-ghost">Edit</a>
+                        <a href="<?= url('admin/products/edit/' . $p['id']) ?>" class="btn btn-sm btn-ghost">Editar</a>
                         <?php if ($canModify): ?>
-                            <form action="<?= url('admin/products/delete/' . $p['id']) ?>" method="post" class="inline-form" onsubmit="return confirm('Delete this product?')">
+                            <form action="<?= url('admin/products/delete/' . $p['id']) ?>" method="post" class="inline-form" onsubmit="return confirm('¿Eliminar este producto?')">
                                 <?= csrfField() ?>
-                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
                             </form>
                         <?php endif; ?>
                     </td>

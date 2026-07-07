@@ -31,19 +31,19 @@ class RoleController extends Controller
     public function create(): void
     {
         $modules = Permission::getAllModules();
-        $permissionLevels = ['view' => 'View Only', 'modify' => 'View & Modify'];
+        $permissionLevels = ['view' => 'Solo ver', 'modify' => 'Ver y modificar'];
 
         $this->view('admin/roles/create', [
             'modules' => $modules,
             'permissionLevels' => $permissionLevels,
-            'title' => 'Create Role',
+            'title' => 'Crear rol',
         ], 'admin');
     }
 
     public function store(): void
     {
         if (!Request::validateCsrf(Request::post('csrf_token', ''))) {
-            Session::setFlash('error', 'Invalid form token.');
+            Session::setFlash('error', 'Token de formulario inválido.');
             $this->redirect('/admin/roles');
         }
 
@@ -52,7 +52,7 @@ class RoleController extends Controller
         $permissions = Request::post('permissions', []);
 
         if ($name === '') {
-            Session::setFlash('error', 'Role name is required.');
+            Session::setFlash('error', 'El nombre del rol es obligatorio.');
             $this->redirect('/admin/roles/create');
         }
 
@@ -69,7 +69,7 @@ class RoleController extends Controller
             );
 
             if ($existing) {
-                Session::setFlash('error', 'A role with this name already exists.');
+                Session::setFlash('error', 'Ya existe un rol con este nombre.');
                 $this->redirect('/admin/roles/create');
             }
 
@@ -102,11 +102,11 @@ class RoleController extends Controller
             $db->commit();
 
             Log::write(Auth::id(), 'create', 'roles', "Created role: {$name}", $roleId);
-            Session::setFlash('success', "Role '{$name}' created successfully.");
+            Session::setFlash('success', "Rol '{$name}' creado correctamente.");
         } catch (\Throwable $e) {
             $db->rollback();
             if (APP_DEBUG) throw $e;
-            Session::setFlash('error', 'Failed to create role.');
+            Session::setFlash('error', 'Error al crear el rol.');
         }
 
         $this->redirect('/admin/roles');
@@ -118,27 +118,27 @@ class RoleController extends Controller
         $role = $db->fetch('SELECT * FROM roles WHERE id = :id', ['id' => $id]);
 
         if (!$role) {
-            Session::setFlash('error', 'Role not found.');
+            Session::setFlash('error', 'Rol no encontrado.');
             $this->redirect('/admin/roles');
         }
 
         $modules = Permission::getAllModules();
         $rolePermissions = Permission::getRolePermissions($id);
-        $permissionLevels = ['view' => 'View Only', 'modify' => 'View & Modify'];
+        $permissionLevels = ['view' => 'Solo ver', 'modify' => 'Ver y modificar'];
 
         $this->view('admin/roles/edit', [
             'role' => $role,
             'modules' => $modules,
             'rolePermissions' => $rolePermissions,
             'permissionLevels' => $permissionLevels,
-            'title' => 'Edit Role',
+            'title' => 'Editar rol',
         ], 'admin');
     }
 
     public function update(int $id): void
     {
         if (!Request::validateCsrf(Request::post('csrf_token', ''))) {
-            Session::setFlash('error', 'Invalid form token.');
+            Session::setFlash('error', 'Token de formulario inválido.');
             $this->redirect('/admin/roles');
         }
 
@@ -146,7 +146,7 @@ class RoleController extends Controller
         $role = $db->fetch('SELECT * FROM roles WHERE id = :id', ['id' => $id]);
 
         if (!$role) {
-            Session::setFlash('error', 'Role not found.');
+            Session::setFlash('error', 'Rol no encontrado.');
             $this->redirect('/admin/roles');
         }
 
@@ -155,7 +155,7 @@ class RoleController extends Controller
         $permissions = Request::post('permissions', []);
 
         if ($name === '') {
-            Session::setFlash('error', 'Role name is required.');
+            Session::setFlash('error', 'El nombre del rol es obligatorio.');
             $this->redirect('/admin/roles/edit/' . $id);
         }
 
@@ -170,7 +170,7 @@ class RoleController extends Controller
             );
 
             if ($conflict) {
-                Session::setFlash('error', 'Another role with this name already exists.');
+                Session::setFlash('error', 'Ya existe otro rol con este nombre.');
                 $this->redirect('/admin/roles/edit/' . $id);
             }
 
@@ -204,11 +204,11 @@ class RoleController extends Controller
             $db->commit();
 
             Log::write(Auth::id(), 'update', 'roles', "Updated role: {$name}", $id);
-            Session::setFlash('success', "Role '{$name}' updated successfully.");
+            Session::setFlash('success', "Rol '{$name}' actualizado correctamente.");
         } catch (\Throwable $e) {
             $db->rollback();
             if (APP_DEBUG) throw $e;
-            Session::setFlash('error', 'Failed to update role.');
+            Session::setFlash('error', 'Error al actualizar el rol.');
         }
 
         $this->redirect('/admin/roles');

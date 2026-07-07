@@ -23,7 +23,7 @@ class UserController extends Controller
              ORDER BY u.id DESC'
         );
 
-        $this->view('admin/users/index', ['users' => $users, 'title' => 'Users'], 'admin');
+        $this->view('admin/users/index', ['users' => $users, 'title' => 'Usuarios'], 'admin');
     }
 
     public function create(): void
@@ -31,13 +31,13 @@ class UserController extends Controller
         $db = Database::getInstance();
         $roles = $db->fetchAll("SELECT id, name FROM roles ORDER BY name");
 
-        $this->view('admin/users/create', ['roles' => $roles, 'title' => 'New User'], 'admin');
+        $this->view('admin/users/create', ['roles' => $roles, 'title' => 'Nuevo usuario'], 'admin');
     }
 
     public function store(): void
     {
         if (!Request::validateCsrf(Request::post('csrf_token', ''))) {
-            Session::setFlash('error', 'Invalid form token.');
+            Session::setFlash('error', 'Token de formulario inválido.');
             $this->redirect('/admin/users');
         }
 
@@ -59,7 +59,7 @@ class UserController extends Controller
         }
 
         if (empty($result['filtered'])) {
-            Session::setFlash('error', 'You do not have permission to edit any user fields.');
+            Session::setFlash('error', 'No tienes permiso para editar campos de usuarios.');
             $this->redirect('/admin/users');
         }
 
@@ -69,17 +69,17 @@ class UserController extends Controller
 
         $existing = $db->fetch('SELECT id FROM users WHERE email = :email', ['email' => $data['email']]);
         if ($existing) {
-            Session::setFlash('error', 'A user with this email already exists.');
+            Session::setFlash('error', 'Ya existe un usuario con este correo electrónico.');
             $this->redirect('/admin/users/create');
         }
 
         try {
             $newId = $db->insert('users', $result['filtered']);
             Log::write($userId, 'create', 'users', "Created user ID: {$newId}", $newId);
-            Session::setFlash('success', 'User created successfully.');
+            Session::setFlash('success', 'Usuario creado correctamente.');
         } catch (\Throwable $e) {
             if (APP_DEBUG) throw $e;
-            Session::setFlash('error', 'Failed to create user.');
+            Session::setFlash('error', 'Error al crear el usuario.');
         }
 
         $this->redirect('/admin/users');
@@ -91,7 +91,7 @@ class UserController extends Controller
         $user = $db->fetch('SELECT * FROM users WHERE id = :id AND deleted_at IS NULL', ['id' => $id]);
 
         if (!$user) {
-            Session::setFlash('error', 'User not found.');
+            Session::setFlash('error', 'Usuario no encontrado.');
             $this->redirect('/admin/users');
         }
 
@@ -104,14 +104,14 @@ class UserController extends Controller
             'editUser' => $user,
             'roles' => $roles,
             'fieldPerms' => $fieldPerms,
-            'title' => 'Edit User',
+            'title' => 'Editar usuario',
         ], 'admin');
     }
 
     public function update(int $id): void
     {
         if (!Request::validateCsrf(Request::post('csrf_token', ''))) {
-            Session::setFlash('error', 'Invalid form token.');
+            Session::setFlash('error', 'Token de formulario inválido.');
             $this->redirect('/admin/users');
         }
 
@@ -119,7 +119,7 @@ class UserController extends Controller
         $user = $db->fetch('SELECT * FROM users WHERE id = :id AND deleted_at IS NULL', ['id' => $id]);
 
         if (!$user) {
-            Session::setFlash('error', 'User not found.');
+            Session::setFlash('error', 'Usuario no encontrado.');
             $this->redirect('/admin/users');
         }
 
@@ -146,23 +146,23 @@ class UserController extends Controller
         }
 
         if (empty($result['filtered'])) {
-            Session::setFlash('error', 'You do not have permission to edit any user fields.');
+            Session::setFlash('error', 'No tienes permiso para editar campos de usuarios.');
             $this->redirect('/admin/users/edit/' . $id);
         }
 
         $existing = $db->fetch('SELECT id FROM users WHERE email = :email AND id != :id', ['email' => $data['email'], 'id' => $id]);
         if ($existing) {
-            Session::setFlash('error', 'A user with this email already exists.');
+            Session::setFlash('error', 'Ya existe un usuario con este correo electrónico.');
             $this->redirect('/admin/users/edit/' . $id);
         }
 
         try {
             $db->update('users', $result['filtered'], 'id = :id', ['id' => $id]);
             Log::write($userId, 'update', 'users', "Updated user ID: {$id}", $id);
-            Session::setFlash('success', 'User updated successfully.');
+            Session::setFlash('success', 'Usuario actualizado correctamente.');
         } catch (\Throwable $e) {
             if (APP_DEBUG) throw $e;
-            Session::setFlash('error', 'Failed to update user.');
+            Session::setFlash('error', 'Error al actualizar el usuario.');
         }
 
         $this->redirect('/admin/users');
@@ -174,22 +174,22 @@ class UserController extends Controller
 
         $roleId = (int) (Auth::user()['role_id'] ?? 0);
         if (!Permission::canModify($roleId, 'users')) {
-            Session::setFlash('error', 'You do not have permission to delete users.');
+            Session::setFlash('error', 'No tienes permiso para eliminar usuarios.');
             $this->redirect('/admin/users');
         }
 
         if ((int) Auth::id() === $id) {
-            Session::setFlash('error', 'You cannot delete your own account.');
+            Session::setFlash('error', 'No puedes eliminar tu propia cuenta.');
             $this->redirect('/admin/users');
         }
 
         try {
             $db->update('users', ['deleted_at' => date('Y-m-d H:i:s')], 'id = :id', ['id' => $id]);
             Log::write(Auth::id() ?? 0, 'delete', 'users', "Deleted user ID: {$id}", $id);
-            Session::setFlash('success', 'User deleted.');
+            Session::setFlash('success', 'Usuario eliminado.');
         } catch (\Throwable $e) {
             if (APP_DEBUG) throw $e;
-            Session::setFlash('error', 'Failed to delete user.');
+            Session::setFlash('error', 'Error al eliminar el usuario.');
         }
 
         $this->redirect('/admin/users');

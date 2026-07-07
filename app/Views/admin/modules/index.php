@@ -1,6 +1,6 @@
 <div class="container">
     <div class="page-header">
-        <h1>Modules</h1>
+        <h1>Módulos</h1>
     </div>
 
     <?php if (hasFlash('success')): ?>
@@ -24,9 +24,9 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Field</th>
-                                    <th>Type</th>
-                                    <th>Modifiable</th>
+                                    <th>Campo</th>
+                                    <th>Tipo</th>
+                                    <th>Modificable</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -38,7 +38,7 @@
                                             <label class="checkbox-label">
                                                 <input type="checkbox" name="modifiable[<?= escape($moduleName) ?>][]" value="<?= escape($field['name']) ?>"
                                                     <?= !empty($field['modifiable']) ? 'checked' : '' ?>>
-                                                Modifiable
+                                                Modificable
                                             </label>
                                         </td>
                                     </tr>
@@ -46,16 +46,16 @@
                             </tbody>
                         </table>
                     <?php else: ?>
-                        <p class="text-muted">No fields defined for this module.</p>
+                        <p class="text-muted">No hay campos definidos para este módulo.</p>
                     <?php endif; ?>
                 </fieldset>
             <?php endforeach; ?>
         <?php else: ?>
-            <p class="text-muted">No modules available.</p>
+            <p class="text-muted">No hay módulos disponibles.</p>
         <?php endif; ?>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Update Modules</button>
+            <button type="submit" class="btn btn-primary">Actualizar módulos</button>
         </div>
     </form>
 </div>
